@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import AddIcon from "@material-ui/icons/Add";
+import Fab from "@material-ui/core/Fab";
+import Zoom from "@material-ui/core/Zoom";
 
 function CreateArea(props) {
   // the title and content is an object
@@ -6,6 +9,13 @@ function CreateArea(props) {
     title: "",
     content: "",
   });
+
+  const [isExpanded, setExpanded] = useState(false);
+
+  // when the textarea is clicked then trigger the expand function to set isExpanded true
+  function expand() {
+    setExpanded(true);
+  }
 
   // when onChange get triggered then call handleChange function with event
   function handleChange(event) {
@@ -17,14 +27,14 @@ function CreateArea(props) {
   }
 
   // function to submit the note
-  function submitNote (event) {
-    // click the add button the trigger the submitNote method 
+  function submitNote(event) {
+    // click the add button the trigger the submitNote method
     // then call the property function onAdd
     // then trigger the function addNote in App.jsx
     props.onAdd(info);
     setInfo({
       title: "",
-      content: ""
+      content: "",
     });
     // while submit always refresh the page, use this to prevent the page refresh
     event.preventDefault();
@@ -32,21 +42,28 @@ function CreateArea(props) {
 
   return (
     <div>
-      <form>
-        <input
-          value={info.title}
-          name="title"
-          placeholder="Title"
-          onChange={handleChange}
-        />
+      <form className="create-note">
+        {isExpanded && (
+          <input
+            value={info.title}
+            name="title"
+            placeholder="Title"
+            onChange={handleChange}
+          />
+        )}
         <textarea
           value={info.content}
           name="content"
           placeholder="Take a note..."
-          rows="3"
+          rows={isExpanded ? 3 : 1}
+          onClick={expand}
           onChange={handleChange}
         />
-        <button onClick={submitNote}>Add</button>
+        <Zoom in={isExpanded}>
+          <Fab onClick={submitNote}>
+            <AddIcon />
+          </Fab>
+        </Zoom>
       </form>
     </div>
   );
